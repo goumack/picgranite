@@ -1,0 +1,36 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: ollama-keepalive-build
+  labels:
+    app: ollama-keepalive
+spec:
+  source:
+    type: Git
+    git:
+      uri: https://github.com/goumack/picgranite.git
+      ref: main
+    contextDir: .
+  strategy:
+    type: Docker
+    dockerStrategy:
+      dockerfilePath: Dockerfile
+  output:
+    to:
+      kind: ImageStreamTag
+      name: ollama-keepalive:latest
+  triggers:
+  - type: ConfigChange
+  - type: GitHub
+    github:
+      secret: github-webhook-secret
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: ollama-keepalive
+  labels:
+    app: ollama-keepalive
+spec:
+  lookupPolicy:
+    local: false

@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama-keepalive
+  labels:
+    app: ollama-keepalive
+    version: "1.0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ollama-keepalive
+  template:
+    metadata:
+      labels:
+        app: ollama-keepalive
+    spec:
+      containers:
+      - name: ollama-keepalive
+        image: ollama-keepalive:latest
+        imagePullPolicy: Always
+        env:
+        - name: OLLAMA_URI
+          value: "https://ollamaaccel-chatbotaccel.apps.senum.heritage.africa/api/generate"
+        - name: MODEL_NAME
+          value: "granite-code:3b"
+        - name: INTERVAL_MINUTES
+          value: "2"
+        - name: PROMPT
+          value: "Bonjour"
+        ports:
+        - containerPort: 8080
+          name: health
+          protocol: TCP
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 60
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 2
+      restartPolicy: Always
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama-keepalive-service
+  labels:
+    app: ollama-keepalive
+spec:
+  selector:
+    app: ollama-keepalive
+  ports:
+  - name: health
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+  type: ClusterIP
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: ollama-keepalive-route
+  labels:
+    app: ollama-keepalive
+spec:
+  to:
+    kind: Service
+    name: ollama-keepalive-service
+  port:
+    targetPort: health
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
