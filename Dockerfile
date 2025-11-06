@@ -14,7 +14,7 @@ ENV INTERVAL_MINUTES="2"
 ENV PROMPT="Bonjour"
 
 # Installer curl pour les health checks (optionnel)
-RUN apk add --no-cache curl
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 # Exposer un port pour les health checks
 EXPOSE 8080
