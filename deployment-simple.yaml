@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alex-keepalive
+  labels:
+    app: alex-keepalive
+    version: "1.0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alex-keepalive
+  template:
+    metadata:
+      labels:
+        app: alex-keepalive
+    spec:
+      containers:
+      - name: alex-keepalive
+        image: image-registry.openshift-image-registry.svc:5000/picgranitep/ollama-keepalive:latest
+        imagePullPolicy: Always
+        env:
+        - name: ALEX_URI
+          value: "https://alex-route-alex-granitechatbot.apps.ocp.heritage.africa/chat"
+        - name: MESSAGE_1
+          value: "Quels sont les services d'Accel Tech ?"
+        - name: MESSAGE_2
+          value: "Comment puis-je vous aider aujourd'hui ?"
+        - name: INTERVAL_MINUTES
+          value: "2"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+      restartPolicy: Always
