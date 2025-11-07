@@ -7,12 +7,15 @@ param(
 )
 
 # Variables
-$ProjectName = "ollama-keepalive"
+$ProjectName = "picgranitep"
 $AppName = "ollama-keepalive"
 
 # Fonction de vérification de connexion OpenShift
 function Test-OCConnection {
     Write-Host "Vérification de la connexion OpenShift..." -ForegroundColor Yellow
+    
+    # Utiliser le chemin complet vers oc
+    Set-Alias -Name oc -Value "C:\Users\baye.niang\Desktop\oc" -Scope Global
     
     try {
         $user = oc whoami 2>$null
@@ -32,16 +35,9 @@ function Test-OCConnection {
 function Initialize-Project {
     Write-Host "Configuration du projet OpenShift..." -ForegroundColor Yellow
     
-    # Vérifier si le projet existe
-    $projectExists = oc get project $ProjectName 2>$null
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host "Le projet $ProjectName existe déjà" -ForegroundColor Green
-        oc project $ProjectName
-    }
-    else {
-        Write-Host "Création du projet $ProjectName" -ForegroundColor Yellow
-        oc new-project $ProjectName --description="Ollama Keep-Alive Service" --display-name="Ollama Keep-Alive"
-    }
+    # Utiliser le projet existant picgranitep
+    Write-Host "Utilisation du projet existant: $ProjectName" -ForegroundColor Green
+    oc project $ProjectName
 }
 
 # Fonction de déploiement

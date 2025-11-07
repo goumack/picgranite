@@ -19,8 +19,8 @@ RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 # Exposer un port pour les health checks
 EXPOSE 8080
 
-# Définir l'utilisateur non-root pour la sécurité
-USER 1001
+# OpenShift gère automatiquement la sécurité des utilisateurs
+# Pas besoin de spécifier USER dans OpenShift
 
 # Commande par défaut pour exécuter le script
 CMD ["pwsh", "-File", "./keep-ollama-alive-container.ps1"]

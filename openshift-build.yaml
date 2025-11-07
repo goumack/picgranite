@@ -9,7 +9,7 @@ spec:
     type: Git
     git:
       uri: https://github.com/goumack/picgranite.git
-      ref: main
+      ref: master
     contextDir: .
   strategy:
     type: Docker

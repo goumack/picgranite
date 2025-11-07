@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: ollama-keepalive
-        image: ollama-keepalive:latest
+        image: image-registry.openshift-image-registry.svc:5000/picgranitep/ollama-keepalive:latest
         imagePullPolicy: Always
         env:
         - name: OLLAMA_URI
@@ -56,10 +56,6 @@ spec:
           timeoutSeconds: 5
           failureThreshold: 2
       restartPolicy: Always
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1001
-        fsGroup: 1001
 ---
 apiVersion: v1
 kind: Service
